@@ -1,0 +1,14 @@
+[project]
+name = "human-like-nao"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-cloud-texttospeech>=2.25.1",
+    "loguru>=0.7.2",
+    "open-webui>=0.5.20",
+    "openai>=1.68.0",
+    "pygame>=2.6.1",
+    "speechrecognition>=3.14.1",
+]
