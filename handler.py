@@ -59,5 +59,5 @@ class Server:
         logger.info("Client socket set: {}", self.client_socket)
 
     def send(self, message: str):
-        logger.info(self.messages_queue)
         self.messages_queue.append(f"{self.mode}:{message}")
+        logger.info(self.messages_queue)
