@@ -18,3 +18,5 @@ wheels/
 *.txt
 
 .DS_store
+
+*.mp3
