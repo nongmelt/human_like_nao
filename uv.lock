@@ -1928,6 +1928,7 @@ dependencies = [
     { name = "loguru" },
     { name = "open-webui" },
     { name = "openai" },
+    { name = "pydantic" },
     { name = "pygame" },
     { name = "speechrecognition" },
 ]
@@ -1938,6 +1939,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.2" },
     { name = "open-webui", specifier = ">=0.5.20" },
     { name = "openai", specifier = ">=1.68.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pygame", specifier = ">=2.6.1" },
     { name = "speechrecognition", specifier = ">=3.14.1" },
 ]

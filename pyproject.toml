@@ -9,6 +9,7 @@ dependencies = [
     "loguru>=0.7.2",
     "open-webui>=0.5.20",
     "openai>=1.68.0",
+    "pydantic>=2.10.6",
     "pygame>=2.6.1",
     "speechrecognition>=3.14.1",
 ]
