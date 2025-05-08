@@ -65,10 +65,8 @@ class Question(BaseModel):
 
 Question1 = Question(
     encouragements_human=(
-        "Nice start! Don’t worry if it’s not clear right away — just look for a pattern in the numbers. You’ve got this!",
         "You’re doing great. Sometimes these puzzles just need a shift in perspective. Try checking how the numbers are changing step by step.",
-        "Almost there! Take a deep breath and double-check the differences between each number. A pattern will pop out soon!",
-        "Don’t give up! You’re close. Let me give you a hint to nudge you in the right direction?",
+        "Don’t give up! You’re close!.",
     ),
     compliments_human={
         AnswerCondition.FAST_CORRECT: "Whoa! That was super fast—high five!",
@@ -88,9 +86,7 @@ Question1 = Question(
 Question2 = Question(
     encouragements_human=(
         "Take your time, but remember — there’s a pattern when you change the size of all sides in a cube. You’ve got this!",
-        "Still thinking? That’s okay! Try to recall how volume changes when dimensions are scaled. Keep going!",
         "You’re doing great! Let’s break it down: if one side doubles, what happens to the whole volume? Don’t give up!",
-        "Need a boost? Imagine how much more space is inside a bigger cube. Let’s work it out together!",
     ),
     compliments_human={
         AnswerCondition.FAST_CORRECT: "Excellent work — you didn’t just rush, you understood it!",
@@ -110,9 +106,7 @@ Question2 = Question(
 Question3 = Question(
     encouragements_human=(
         "Nice progress! Look closely — each row follows a rule. Focus on one row at a time.",
-        "You’re on the right track. Try to figure out what changes from left to right in each row. Sometimes it’s the shape, sometimes the lines.",
         "Almost there! Think about what the shapes have in common across each row and column. Keep your eyes sharp!",
-        "Don’t give up! Go back to the second row — it might give you a big clue. Patterns are clearer when you compare rows.",
     ),
     compliments_human={
         AnswerCondition.FAST_CORRECT: "That was fast and right on target! — impressive!",
@@ -132,9 +126,7 @@ Question3 = Question(
 Question4 = Question(
     encouragements_human=(
         "This one’s about finding a pattern. Try listing or visualizing who shakes hands with who!",
-        "You're doing great — think of it like connections between people. Each person only shakes hands once with each other person.",
         "Almost there! Try not to count duplicates. Each handshake only happens once.",
-        "This one's tricky but fun — maybe imagine drawing lines between 4 people to count the connections.",
     ),
     compliments_human={
         AnswerCondition.FAST_CORRECT: "That was fast and right on target! — impressive!",
@@ -148,15 +140,13 @@ Question4 = Question(
         "Now, the second person doesn’t shake hands with the first again—only with the remaining two.",
         "Keep going like that: each person shakes hands only with those they haven’t already. That keeps you from counting the same one twice.",
     ),
-    answer="6. The first person shakes hands with 3 others, the second with 2, and the last one with 1. So, 3 + 2 + 1 = 6.",
+    answer="The answer is 6. The first person shakes hands with 3 others, the second with 2, and the last one with 1. So, 3 + 2 + 1 = 6.",
 )
 
 Question5 = Question(
     encouragements_human=(
         "Take your time, you’re doing great! Think carefully about patterns between numbers and words.",
         "You’ve already solved four questions — don’t give up now! Focus on breaking it into parts.",
-        "Almost there! Try not to count duplicates. Each handshake only happens once.",
-        "Almost there! Remember, it’s okay to look for clues in the relationship between numbers and letters.",
     ),
     compliments_human={
         AnswerCondition.FAST_CORRECT: "Impressive speed and accuracy — you should feel proud of how fast you reasoned that out!",
