@@ -1,6 +1,7 @@
 from google.cloud import texttospeech
 from loguru import logger
 
+
 class GoogleCloudTextToSpeech:
     def __init__(self):
         self.client = texttospeech.TextToSpeechClient()
@@ -33,7 +34,7 @@ class GoogleCloudTextToSpeech:
         voice = texttospeech.VoiceSelectionParams(
             name="en-US-Neural2-D",
             language_code="en-US",
-            ssml_gender=texttospeech.SsmlVoiceGender.MALE
+            ssml_gender=texttospeech.SsmlVoiceGender.MALE,
         )
 
         # Select the type of audio file you want returned
@@ -56,5 +57,28 @@ class GoogleCloudTextToSpeech:
 
 if __name__ == "__main__":
     gc_tts = GoogleCloudTextToSpeech()
-    # gc_tts.list_voices()
-    gc_tts.synthesis_input("Wow! That’s fantastic!", filename="choregraphe/output2.mp3")
+    from mappings import MESSAGES, STREAK_MESSAGES
+    from game import MessageType
+
+    for idx, msg in enumerate(STREAK_MESSAGES):
+        gc_tts.synthesis_input(
+            msg, filename=f"choregraphe/0{MessageType.STREAK}{idx}.mp3"
+        )
+
+    for i, q in enumerate(MESSAGES):
+        for idx, msg in enumerate(q.encouragements_human):
+            gc_tts.synthesis_input(
+                msg, filename=f"choregraphe/{i+1}{MessageType.ENCOURAGEMENT}{idx}.mp3"
+            )
+        for k, v in q.compliments_human.items():
+            gc_tts.synthesis_input(
+                v, filename=f"choregraphe/{i+1}{MessageType.COMPLIMENT}{k}.mp3"
+            )
+        for idx, msg in enumerate(q.hints):
+            gc_tts.synthesis_input(
+                msg, filename=f"choregraphe/{i+1}{MessageType.HINT}{idx}.mp3"
+            )
+        gc_tts.synthesis_input(
+            q.answer,
+            filename=f"choregraphe/{i+1}{MessageType.TIMEOUT}0.mp3",
+        )
