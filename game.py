@@ -24,6 +24,7 @@ class MessageType(IntEnum):
     ENCOURAGEMENT = 1
     COMPLIMENT = 2
     TIMEOUT = 3
+    STREAK = 4
 
 
 def create_data_folder(name):
@@ -48,9 +49,9 @@ def increment_participant_id():
 class QuizGame:
     ENCOURAGEMENT_TIME = 20
     ENCOURAGEMENT_STEP = 25
-    HINT_TIME = 100
+    HINT_TIME = 60
     HINT_STEP = 20
-    TIME_OUT = 180
+    TIME_OUT = 120
 
     FAST_RESPONSE_TIME = 50
 
@@ -71,8 +72,8 @@ class QuizGame:
 
         self.FONT = pygame.font.SysFont("Arial", 28)
         self.SMALL_FONT = pygame.font.SysFont("Arial", 22)
-        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.screen = pygame.display.set_mode((800, 750))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # self.screen = pygame.display.set_mode((800, 750))
         self.WIDTH, self.HEIGHT = self.screen.get_size()
         pygame.display.set_caption("Robot Interaction Quiz")
 
@@ -282,9 +283,9 @@ class QuizGame:
 
         while not answered:
             rects = self.render_question(q, selected)
-            self.draw_timer(start_time, self.total_quiz_time)
-            elapsed = time.time() - start_time
             remaining_time = self.total_quiz_time - (time.time() - self.quiz_start_time)
+            self.draw_timer(self.quiz_start_time, self.total_quiz_time)
+            elapsed = time.time() - start_time
 
             if remaining_time <= 0:
                 self.show_results()
@@ -298,7 +299,8 @@ class QuizGame:
                 self.record_answer(q, None, False, time.time() - start_time)
                 answered = True
                 self.reset_question()
-                time.sleep(3)
+                time.sleep(6)
+                self.quiz_start_time += 6
                 continue
 
             answered, selected = self.handle_user_input(rects, q, start_time)
@@ -373,11 +375,14 @@ class QuizGame:
 
     def send_feedback_message(self, correct, answer_time):
         if self.streak >= 3:
-            message = STREAK_MESSAGES[self.streak - 3]
+            if self.mode == "robot":
+                message = STREAK_MESSAGES[self.streak - 3]
+            else:
+                message = f"0{MessageType.STREAK}{self.streak - 3}"
         else:
             condition = self.determine_condition(correct, answer_time)
             message = (
-                COMPLIMENT_MESSAGES[condition]
+                random.choice((COMPLIMENT_MESSAGES[condition]))
                 if self.mode == "robot"
                 else f"{self.current_question}{MessageType.COMPLIMENT}{condition}"
             )
@@ -407,167 +412,15 @@ class QuizGame:
         logger.info("Quiz starting")
         for q in self.questions:
             self.handle_question(q)
+        self.current_question = 6
+        self.encouragement_popup("Well done!", MessageType.COMPLIMENT)
         self.show_results()
-
-    # def quiz_loop(self):
-    #     quiz_start_time = time.time()
-    #     logger.info("Quiz initilising")
-
-    #     for idx, q in enumerate(self.questions):
-    #         self.current_question = q["question"]
-    #         selected = None
-    #         start_time = time.time()
-    #         answered = False
-
-    #         while not answered:
-    #             rects = self.render_question(q, selected)
-    #             self.draw_timer(quiz_start_time, self.total_quiz_time)
-
-    #             # Global remaining time display
-    #             remaining_time = self.total_quiz_time - (time.time() - quiz_start_time)
-    #             if remaining_time <= 0:
-    #                 self.show_results()
-    #                 return
-
-    #             # Per-question timer
-    #             elapsed = time.time() - start_time
-
-    #             # Give encouragements
-    #             if self.encouragement_popup_time <= elapsed < self.HINT_TIME:
-    #                 if self.mode == "robot":
-    #                     sending_message = random.choices(ENCOURAGEMENT_MESSAGES)
-    #                 elif self.mode == "human":
-    #                     sending_message = f"{self.current_question}{MessageType.ENCOURAGEMENT}{self.encouragement_level}"
-    #                     self.encouragement_level += 1
-
-    #                 if isinstance(sending_message, str):
-    #                     self.encouragement_popup(
-    #                         sending_message, message_type=MessageType.ENCOURAGEMENT
-    #                     )
-    #                 self.encouragement_popup_time += self.ENCOURAGEMENT_STEP
-    #             # Give hints
-    #             elif elapsed >= self.hint_popup_time:
-    #                 if self.mode == "robot":
-    #                     sending_message = MESSAGES[self.current_question].hints[
-    #                         self.hint_level
-    #                     ]
-    #                 elif self.mode == "human":
-    #                     sending_message = f"{self.current_question}{MessageType.HINT}{self.hint_level}"
-    #                     self.hint_level += 1
-
-    #                 if isinstance(sending_message, str):
-    #                     self.encouragement_popup(
-    #                         sending_message, message_type=MessageType.HINT
-    #                     )
-    #                 self.hint_popup_time += self.HINT_STEP
-
-    #             elif elapsed >= self.TIME_OUT:
-    #                 if self.mode == "robot":
-    #                     sending_message = MESSAGES[self.current_question].answer
-    #                 elif self.mode == "human":
-    #                     sending_message = (
-    #                         f"{self.current_question}{MessageType.TIMEOUT}0"
-    #                     )
-    #                 if isinstance(sending_message, str):
-    #                     self.encouragement_popup(
-    #                         sending_message, message_type=MessageType.TIMEOUT
-    #                     )
-
-    #                 answered = True
-    #                 answer_time = time.time() - start_time
-    #                 self.results.append(
-    #                     {
-    #                         "question": q["question"],
-    #                         "selected": None,
-    #                         "correct": q["correct"],
-    #                         "is_correct": False,
-    #                         "time_taken": round(answer_time, 2),
-    #                     }
-    #                 )
-    #                 self.reset_question()
-    #                 self.streak = 0
-
-    #             exit_button = self.draw_exit_button()
-
-    #             for event in pygame.event.get():
-    #                 if event.type == pygame.QUIT:
-    #                     self.quit()
-
-    #                 elif event.type == pygame.MOUSEBUTTONDOWN:
-    #                     pos = pygame.mouse.get_pos()
-    #                     if exit_button.collidepoint(event.pos):
-    #                         self.show_results()
-    #                         return
-
-    #                     for i, rect in enumerate(rects):
-    #                         if rect.collidepoint(pos) and not answered:
-    #                             selected = i
-    #                             answer_time = time.time() - start_time
-    #                             correct = q["options"][selected] == q["correct"]
-    #                             self.results.append(
-    #                                 {
-    #                                     "question": q["question"],
-    #                                     "selected": q["options"][selected],
-    #                                     "correct": q["correct"],
-    #                                     "is_correct": correct,
-    #                                     "time_taken": round(answer_time, 2),
-    #                                 }
-    #                             )
-
-    #                             answered = True
-    #                             self.streak = 0 if not correct else self.streak + 1
-
-    #                             if self.streak >= 3:
-    #                                 sending_message = STREAK_MESSAGES[self.streak - 3]
-    #                             else:
-    #                                 if answer_time <= self.FAST_RESPONSE_TIME:
-    #                                     condition = (
-    #                                         AnswerCondition.FAST_CORRECT
-    #                                         if correct
-    #                                         else AnswerCondition.FAST_INCORRECT
-    #                                     )
-    #                                 elif answer_time <= self.HINT_TIME:
-    #                                     condition = (
-    #                                         AnswerCondition.SLOW_CORRECT
-    #                                         if correct
-    #                                         else AnswerCondition.SLOW_INCORRECT
-    #                                     )
-    #                                 else:
-    #                                     if self.mode == "robot":
-    #                                         condition = (
-    #                                             AnswerCondition.SLOW_CORRECT
-    #                                             if correct
-    #                                             else AnswerCondition.SLOW_INCORRECT
-    #                                         )
-    #                                     elif self.mode == "human":
-    #                                         condition = (
-    #                                             AnswerCondition.HINT_CORRECT
-    #                                             if correct
-    #                                             else AnswerCondition.SLOW_INCORRECT
-    #                                         )
-    #                                 if self.mode == "robot":
-    #                                     sending_message = COMPLIMENT_MESSAGES[condition]
-    #                                 elif self.mode == "human":
-    #                                     sending_message = f"{self.current_question}{MessageType.COMPLIMENT}{condition}"
-
-    #                                 if isinstance(sending_message, str):
-    #                                     self.encouragement_popup(
-    #                                         sending_message,
-    #                                         message_type=MessageType.COMPLIMENT,
-    #                                     )
-    #                             self.reset_question()
-    #                             pygame.display.flip()
-    #                             continue
-
-    #             pygame.display.flip()
-
-    #     self.show_results()
 
     @staticmethod
     def landing_page():
         pygame.init()
-        # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        screen = pygame.display.set_mode((800, 750))
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # screen = pygame.display.set_mode((800, 750))
         WIDTH, HEIGHT = screen.get_size()
         FONT = pygame.font.SysFont("Arial", 48)
         SMALL_FONT = pygame.font.SysFont("Arial", 28)
